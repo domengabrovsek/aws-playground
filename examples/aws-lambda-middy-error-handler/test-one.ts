@@ -1,9 +1,6 @@
-export const handler = async () => {
+import middleware from "middleware";
 
+export const handler = middleware(async () => {
   console.log('Called from test-one');
-
-  return {
-    body: JSON.stringify({ message: 'Called from test-one' }),
-    statusCode: 200
-  };
-};
+  throw new Error("some cool error");
+});
