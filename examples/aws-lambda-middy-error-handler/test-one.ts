@@ -1,7 +1,6 @@
-module.exports.handler = async (event, context) => {
+export const handler = async () => {
 
   console.log('Called from test-one');
-  console.log(context);
 
   return {
     body: JSON.stringify({ message: 'Called from test-one' }),
