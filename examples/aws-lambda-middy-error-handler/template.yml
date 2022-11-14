@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "aws-lambda-middy-error-handler"
+
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Timeout: 30
+    MemorySize: 128
+    Environment:
+      Variables:
+        NODE_OPTIONS: --enable-source-maps
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+Resources:
+  TestOneFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: test-one.handler
+      Events:
+        AuthorizeEvent:
+          Type: Api
+          Properties:
+            Path: /test/one
+            Method: POST
+  TestTwoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: test-two.handler
+      Events:
+        AuthorizeEvent:
+          Type: Api
+          Properties:
+            Path: /test/two
+            Method: POST

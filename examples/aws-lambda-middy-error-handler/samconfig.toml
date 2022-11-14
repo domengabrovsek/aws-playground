@@ -1,0 +1,8 @@
+version = 0.1
+
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "aws-lambda-middy-error-handler"
+region = "eu-central-1"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"

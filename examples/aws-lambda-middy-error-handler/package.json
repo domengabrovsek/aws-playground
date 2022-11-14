@@ -1,0 +1,12 @@
+{
+  "name": "aws-lambda-middy-error-handler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test-one.js",
+  "scripts": {
+    "deploy": "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --profile admin-personal --config-env dev --resolve-s3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
