@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "aws-lambda-cloudwatch-playground"
+
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Timeout: 30
+    MemorySize: 128
+    CodeUri: src/
+    Environment:
+      Variables:
+        NODE_OPTIONS: --enable-source-maps
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+Resources:
+  TestOneFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: test-one.handler
+      Events:
+        AuthorizeEvent:
+          Type: Api
+          Properties:
+            Path: /test/one
+            Method: POST
+  TestTwoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: test-two.handler
+      Events:
+        AuthorizeEvent:
+          Type: Api
+          Properties:
+            Path: /test/two
+            Method: POST
+
+  LambdaPermissionsToCW:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: !Join ['-', ['LambdaExecutionRolePolicyCW', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutRetentionPolicy
+                  - logs:CreateLogGroup
+                  - logs:PutLogEvents
+                  - logs:DescribeLogGroups
+                Resource: "*"
+
+  CWRetentionPeriodFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: CWRetentionPeriodFunction
+      Handler: "retention.handler"
+      Role: !GetAtt LambdaPermissionsToCW.Arn
+
+  EventRule: 
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: "EventRule"
+      EventPattern: 
+        source: 
+          - "aws.logs"
+        detail-type: 
+          - "AWS API Call via CloudTrail"
+        detail: 
+          eventSource: 
+            - "logs.amazonaws.com"
+          eventName:
+            - "CreateLogGroup"
+      State: "ENABLED"
+
+  PermissionForEventsToInvokeLambda: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: 
+        Ref: "CWRetentionPeriodFunction"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: 
+        Fn::GetAtt: 
+          - "EventRule"
+          - "Arn"

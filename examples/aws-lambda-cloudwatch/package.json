@@ -1,0 +1,20 @@
+{
+  "name": "aws-lambda-cloudwatch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --profile admin-personal --config-env dev --resolve-s3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/domengabrovsek/aws-lambda-cloudwatch.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/domengabrovsek/aws-lambda-cloudwatch/issues"
+  },
+  "homepage": "https://github.com/domengabrovsek/aws-lambda-cloudwatch#readme"
+}
