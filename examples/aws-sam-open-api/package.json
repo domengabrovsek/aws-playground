@@ -1,0 +1,38 @@
+{
+  "name": "aws-sam-open-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack-cli",
+    "deploy": "rimraf .aws-sam && npm run build && sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --profile aws-sam-ts-test-user --config-env dev --resolve-s3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/domengabrovsek/aws-sam-open-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/domengabrovsek/aws-sam-open-api/issues"
+  },
+  "homepage": "https://github.com/domengabrovsek/aws-sam-open-api#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.98",
+    "@types/node": "^17.0.40",
+    "aws-sam-webpack-plugin": "^0.12.0",
+    "aws-sdk": "^2.1150.0",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^9.3.0",
+    "typescript": "^4.7.3",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "@types/swagger-ui-dist": "^3.30.1",
+    "html-webpack-plugin": "^5.5.0",
+    "swagger-ui": "^4.12.0",
+    "swagger-ui-dist": "^4.12.0"
+  }
+}

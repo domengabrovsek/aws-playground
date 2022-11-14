@@ -1,0 +1,58 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "aws-sam-openapi-dev",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://db407i1xkh.execute-api.eu-central-1.amazonaws.com/{basePath}",
+      "variables": {
+        "basePath": {
+          "default": "/dev"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/hello": {
+      "post": {
+        "operationId": "hello",
+        "requestBody": {
+          "description": "something",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestSchema"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Test"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {},
+    "schemas": {
+      "TestSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "body": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "aws-sam-openapi"
+
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        NODE_OPTIONS: --enable-source-maps # enable source maps for bundled code to have readable logs (https://nodejs.org/api/cli.html#--enable-source-maps)
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1 # https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html        
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+
+Resources:
+  ServiceApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub aws-sam-openapi-${Environment}
+      StageName: !Ref Environment
+
+  TestGetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.handler
+      Runtime: nodejs16.x
+      Events:
+        TestEvent:
+          Type: Api 
+          Properties:
+            Path: /hello
+            Method: get
+            RestApiId: !Ref ServiceApi
+
+  TestSwaggerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: swagger.handler
+      Runtime: nodejs16.x
+      Events:
+        TestEvent:
+          Type: Api 
+          Properties:
+            Path: /swagger
+            Method: get
+            RestApiId: !Ref ServiceApi
+
+Outputs:
+  ServiceApi:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ServiceApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"
