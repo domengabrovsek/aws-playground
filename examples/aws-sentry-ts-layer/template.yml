@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: aws-sam-ts-test
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+    Runtime: nodejs16.x
+    Layers:
+      - !Ref AxiosLayer
+      - !Ref CommonLayer
+    Environment:
+      Variables:
+        NODE_OPTIONS: --enable-source-maps
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+
+Resources:
+  ServiceApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub AWS-Sentry-TS-${Environment}
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+
+  FunctionOne:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: function-one.handler
+      FunctionName: function-one
+      CodeUri: dist/functions/
+      Events:
+        FunctionOneEvent:
+          Type: Api
+          Properties:
+            Path: /function-one
+            Method: get
+            RestApiId: !Ref ServiceApi
+
+  FunctionTwo:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: function-two.handler
+      FunctionName: function-two
+      CodeUri: dist/functions
+      Events:
+        TestEvent:
+          Type: Api
+          Properties:
+            Path: /function-two
+            Method: get
+            RestApiId: !Ref ServiceApi
+  
+  AxiosLayer:
+   Type: AWS::Serverless::LayerVersion
+   Properties:
+    LayerName: axios-layer
+    ContentUri: dist/axios-layer/
+    CompatibleRuntimes:
+      - nodejs16.x
+    RetentionPolicy: Retain
+
+  CommonLayer:
+   Type: AWS::Serverless::LayerVersion
+   Properties:
+    LayerName: common-layer
+    ContentUri: dist/common-layer/
+    CompatibleRuntimes:
+      - nodejs16.x
+    RetentionPolicy: Retain
+
+Outputs:
+  ServiceApi:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ServiceApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"
