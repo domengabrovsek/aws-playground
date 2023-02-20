@@ -3,6 +3,10 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { AwsCdkStack } from '../lib/aws-cdk-stack';
 
+// load env vars
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 const app = new cdk.App();
 new AwsCdkStack(app, 'AwsCdkStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
