@@ -17,16 +17,49 @@ Globals:
         AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 Resources:
-  Lambda:
+  CreateProduct:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lambda/app.handler
+      Handler: lambda/create-product.handler
       Events:
         TestEvent:
           Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /products
+            Method: POST
+
+  DeleteProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/delete-product.handler
+      Events:
+        TestEvent:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: DELETE
+  
+  GetProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/get-product.handler
+      Events:
+        TestEvent:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: GET
+  
+  UpdateProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/update-product.handler
+      Events:
+        TestEvent:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: PUT
 
   NodeLayer:
     Type: AWS::Serverless::LayerVersion
@@ -34,5 +67,5 @@ Resources:
       LayerName: node-layer
       ContentUri: dist/node-layer/
       CompatibleRuntimes:
-        - nodejs16.x
+        - nodejs18.x
       RetentionPolicy: Retain

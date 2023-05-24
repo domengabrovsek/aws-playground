@@ -1,9 +1,8 @@
-import { Handler } from 'aws-lambda';
 import { logger, tracer, metrics } from '../lib/powertools';
 import { captureLambdaHandler } from '@aws-lambda-powertools/tracer';
-// import { logMetrics } from '@aws-lambda-powertools/metrics';
+import { logMetrics } from '@aws-lambda-powertools/metrics';
 import middy, { MiddlewareObj, Request } from '@middy/core';
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
 
 export const loggingMiddleware = (): MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
 
@@ -46,6 +45,6 @@ export const loggingMiddleware = (): MiddlewareObj<APIGatewayProxyEvent, APIGate
 export default (handler: Handler) => middy(handler)
   .use([
     captureLambdaHandler(tracer),
-    // logMetrics(metrics, { captureColdStartMetric: true }),
+    logMetrics(metrics, { captureColdStartMetric: true }),
     loggingMiddleware()
   ]);
