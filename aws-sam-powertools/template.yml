@@ -1,25 +1,38 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: aws-sam-powertools
 
 Globals:
   Function:
+    Tracing: Active
     Timeout: 3
     MemorySize: 512
     Runtime: nodejs18.x
-    CodeUri: dist/lambda/
+    CodeUri: dist/
+    Layers:
+      - !Ref NodeLayer
     Environment:
       Variables:
         NODE_OPTIONS: --enable-source-maps
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 Resources:
   Lambda:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: app.handler
+      Handler: lambda/app.handler
       Events:
         TestEvent:
-          Type: Api 
+          Type: Api
           Properties:
             Path: /hello
             Method: get
+
+  NodeLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: node-layer
+      ContentUri: dist/node-layer/
+      CompatibleRuntimes:
+        - nodejs16.x
+      RetentionPolicy: Retain

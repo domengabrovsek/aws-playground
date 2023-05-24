@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:node": "npm install --omit=dev && mkdir -p dist/node-layer/nodejs && cp -R node_modules dist/node-layer/nodejs",
     "clean": "rimraf .aws-sam",
-    "deploy": "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --profile aws-playground-service-account --resolve-s3 --stack-name aws-sam-powertools --capabilities CAPABILITY_IAM --region eu-central-1",
-    "build": "tsc"
+    "sam:deploy": "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --profile aws-playground-service-account --resolve-s3 --stack-name aws-sam-powertools --capabilities CAPABILITY_IAM --region eu-central-1",
+    "build": "tsc",
+    "deploy": "npm install && npm run clean && npm run build && npm run build:node && npm run sam:deploy"
   },
   "repository": {
     "type": "git",
@@ -25,5 +27,11 @@
     "rimraf": "^3.0.2",
     "ts-loader": "^9.3.0",
     "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "^1.8.0",
+    "@aws-lambda-powertools/metrics": "^1.8.0",
+    "@aws-lambda-powertools/tracer": "^1.8.0",
+    "@middy/core": "^4.4.3"
   }
 }

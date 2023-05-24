@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2020", // Specify the target ECMAScript version
     "module": "commonjs", // Specify the module system
+    "moduleResolution": "node", // Specify module resolution strategy
     "strict": true, // Enable strict type checking
     "strictNullChecks": true, // Enable strict null checks
     "esModuleInterop": true, // Enable ECMAScript 6 modules interoperability
@@ -10,6 +11,9 @@
     "rootDir": "src", // Specify the root directory for input files
     "skipLibCheck": true, // Skip type checking of declaration files
     "allowJs": true, // Generate declaration files for JavaScript files
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
   },
   "include": [
     "src/**/*"
