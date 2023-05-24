@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: aws-sam-powertools
+
+Globals:
+  Function:
+    Tracing: Active
+    Timeout: 3
+    MemorySize: 512
+    Runtime: nodejs18.x
+    CodeUri: dist/
+    Layers:
+      - !Ref NodeLayer
+    Environment:
+      Variables:
+        NODE_OPTIONS: --enable-source-maps
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+Resources:
+  CreateProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/create-product.handler
+      Events:
+        TestEvent:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: POST
+
+  DeleteProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/delete-product.handler
+      Events:
+        TestEvent:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: DELETE
+  
+  GetProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/get-product.handler
+      Events:
+        TestEvent:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: GET
+  
+  UpdateProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/update-product.handler
+      Events:
+        TestEvent:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: PUT
+
+  NodeLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: node-layer
+      ContentUri: dist/node-layer/
+      CompatibleRuntimes:
+        - nodejs18.x
+      RetentionPolicy: Retain
