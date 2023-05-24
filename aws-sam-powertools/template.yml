@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: aws-sam-powertools
+
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 512
+    Runtime: nodejs18.x
+    CodeUri: dist/lambda/
+    Environment:
+      Variables:
+        NODE_OPTIONS: --enable-source-maps
+
+Resources:
+  Lambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Events:
+        TestEvent:
+          Type: Api 
+          Properties:
+            Path: /hello
+            Method: get
