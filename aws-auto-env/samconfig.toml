@@ -1,0 +1,7 @@
+version = 0.1
+
+[dev.deploy]
+[dev.deploy.parameters]
+region = "eu-central-1"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"

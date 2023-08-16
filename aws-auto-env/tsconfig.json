@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "lib": [
+      "es2020"
+    ],
+    "target": "es2019",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "axios": ["dist/axios-layer/nodejs/node_modules/axios"],
+      "/opt/nodejs/common/*": ["src/common/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js"
+  ]
+}
