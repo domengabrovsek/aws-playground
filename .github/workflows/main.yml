@@ -1,0 +1,65 @@
+name: Deploy and Test Stack
+
+# https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: write # This is required for actions/checkout
+
+env:
+  NODE_VERSION: 18
+  AWS_REGION: eu-central-1
+  STACK_NAME: aws-auto-${GITHUB_RUN_ID}
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # setup node
+      - name: Set up node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # setup AWS SAM
+      - name: Setup AWS SAM
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      # install dependencies
+      - name: Install dependencies
+        run: cd aws-auto-env && npm ci --ignore-scripts
+
+      # deploy the stack
+      - name: Deploy
+        run: |
+          cd aws-auto-env 
+          npm run build
+          sam deploy --stack-name ${{ env.STACK_NAME }} --no-confirm-changeset --no-fail-on-empty-changeset --config-env dev --resolve-s3
+
+      # retrieve rest api url
+      - name: Retrieve API Gateway URL
+        run: |
+          API_URL=$(aws cloudformation describe-stacks --stack-name ${{ env.STACK_NAME }} --output json | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGateway") | .OutputValue')
+          echo $API_URL
+
+      # delete stack
+      - name: Delete Stack
+        run: aws cloudformation delete-stack --stack-name ${{ env.STACK_NAME }}
